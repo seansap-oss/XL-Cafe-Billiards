@@ -1,4 +1,14 @@
-export function ProfilePage() {
+import { TIER_CONFIG } from '../../types/rewards';
+import type { MemberState } from '../useMember';
+
+interface ProfilePageProps {
+  member: MemberState;
+  history: Array<{ amount: number; source: string; date: string }>;
+}
+
+export function ProfilePage({ member, history }: ProfilePageProps) {
+  const tierInfo = TIER_CONFIG[member.tier];
+
   return (
     <div className="min-h-screen">
       {/* Header */}
@@ -8,20 +18,20 @@ export function ProfilePage() {
             className="w-16 h-16 rounded-full flex items-center justify-center text-xl font-bold"
             style={{
               fontFamily: "'Cinzel', serif",
-              background: 'linear-gradient(135deg, #d4a04a, #b8922f)',
+              background: `linear-gradient(135deg, ${tierInfo.color}, ${tierInfo.color}cc)`,
               color: '#0a0a0c',
             }}
           >
-            S
+            {member.name[0]}
           </div>
           <div>
             <h1 className="text-lg font-bold" style={{ fontFamily: "'Cinzel', serif", color: '#f5f0e8' }}>
-              Sean
+              {member.name}
             </h1>
             <p className="text-xs" style={{ color: 'rgba(245,240,232,0.35)' }}>Member since Feb 2024</p>
             <div className="flex items-center gap-1.5 mt-1">
-              <div className="w-1.5 h-1.5 rounded-full" style={{ background: '#c0c0c0' }} />
-              <span className="text-[9px] tracking-wider uppercase" style={{ color: '#c0c0c0' }}>Silver Tier</span>
+              <div className="w-1.5 h-1.5 rounded-full" style={{ background: tierInfo.color }} />
+              <span className="text-[9px] tracking-wider uppercase" style={{ color: tierInfo.color }}>{tierInfo.label} Tier</span>
             </div>
           </div>
         </div>
@@ -31,10 +41,10 @@ export function ProfilePage() {
       <section className="px-5 mb-6">
         <div className="grid grid-cols-2 gap-3">
           {[
-            { label: 'Total Spent', value: '$1,847', accent: '#d4a04a' },
-            { label: 'Points Earned', value: '1,340', accent: '#8b5cf6' },
-            { label: 'Visits', value: '42', accent: '#3b82f6' },
-            { label: 'Rewards Claimed', value: '8', accent: '#22c55e' },
+            { label: 'Total Spent', value: `$${(member.scanCount * 25).toLocaleString()}`, accent: '#d4a04a' },
+            { label: 'Points Earned', value: member.points.toLocaleString(), accent: '#8b5cf6' },
+            { label: 'Visits', value: String(member.scanCount), accent: '#3b82f6' },
+            { label: 'Streak', value: `${member.streak} days`, accent: '#22c55e' },
           ].map((stat) => (
             <div
               key={stat.label}
@@ -57,22 +67,22 @@ export function ProfilePage() {
         <div
           className="p-5 rounded-2xl relative overflow-hidden"
           style={{
-            background: 'linear-gradient(135deg, #1a1a2e 0%, #0f0f1a 100%)',
-            border: '1px solid rgba(192,192,192,0.15)',
+            background: `linear-gradient(135deg, ${tierInfo.color}10 0%, ${tierInfo.color}05 100%)`,
+            border: `1px solid ${tierInfo.color}20`,
           }}
         >
-          <div className="absolute top-0 right-0 w-32 h-32" style={{ background: 'radial-gradient(circle, rgba(192,192,192,0.05) 0%, transparent 70%)' }} />
+          <div className="absolute top-0 right-0 w-32 h-32" style={{ background: `radial-gradient(circle, ${tierInfo.color}08 0%, transparent 70%)` }} />
           <div className="relative">
             <div className="flex items-center justify-between mb-6">
-              <span className="text-xs tracking-[0.2em] uppercase" style={{ color: '#c0c0c0', fontFamily: "'Cinzel', serif" }}>
-                Silver Member
+              <span className="text-xs tracking-[0.2em] uppercase" style={{ color: tierInfo.color, fontFamily: "'Cinzel', serif" }}>
+                {tierInfo.label} Member
               </span>
               <span className="text-[9px] tracking-wider" style={{ color: 'rgba(245,240,232,0.2)' }}>
                 XL Rewards
               </span>
             </div>
             <p className="text-lg font-bold mb-4" style={{ fontFamily: "'Cinzel', serif", color: '#f5f0e8', letterSpacing: '0.05em' }}>
-              XL-2024-0847
+              {member.id}
             </p>
             <div className="flex items-center justify-between">
               <div>
@@ -81,35 +91,61 @@ export function ProfilePage() {
               </div>
               <div className="text-right">
                 <p className="text-[9px] tracking-wider uppercase" style={{ color: 'rgba(245,240,232,0.25)' }}>Member</p>
-                <p className="text-xs" style={{ color: 'rgba(245,240,232,0.5)' }}>Sean</p>
+                <p className="text-xs" style={{ color: 'rgba(245,240,232,0.5)' }}>{member.name}</p>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Monthly summary */}
+      {/* Referral code */}
+      <section className="px-5 mb-6">
+        <div
+          className="rounded-xl p-4"
+          style={{ background: 'rgba(139,92,246,0.06)', border: '1px solid rgba(139,92,246,0.12)' }}
+        >
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-xs font-semibold" style={{ color: '#f5f0e8' }}>Your Referral Code</p>
+            <span className="text-[9px]" style={{ color: 'rgba(245,240,232,0.25)' }}>{member.referredCount}/10 used</span>
+          </div>
+          <div
+            className="py-2 px-3 rounded-lg text-center font-mono text-xs"
+            style={{ background: 'rgba(0,0,0,0.3)', color: '#d4a04a', letterSpacing: '0.1em' }}
+          >
+            {member.referralCode}
+          </div>
+        </div>
+      </section>
+
+      {/* Recent scans */}
       <section className="px-5 mb-6">
         <h2 className="text-xs tracking-wider uppercase mb-3" style={{ fontFamily: "'Cinzel', serif", color: 'rgba(245,240,232,0.35)' }}>
-          This Month
+          Recent Scans
         </h2>
-        <div className="p-4 rounded-xl" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)' }}>
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs" style={{ color: 'rgba(245,240,232,0.4)' }}>June 2025</span>
-            <span className="text-xs font-semibold" style={{ color: '#d4a04a' }}>$182.50</span>
-          </div>
-          <div className="space-y-2">
-            {[
-              { label: 'XL Billiards', visits: 4, spend: '$87.00' },
-              { label: 'XL Cafe', visits: 3, spend: '$42.50' },
-              { label: 'XL Live', visits: 2, spend: '$53.00' },
-            ].map((venue) => (
-              <div key={venue.label} className="flex items-center justify-between">
-                <span className="text-[10px]" style={{ color: 'rgba(245,240,232,0.3)' }}>{venue.label}</span>
-                <span className="text-[10px]" style={{ color: 'rgba(245,240,232,0.2)' }}>{venue.visits} visits • {venue.spend}</span>
+        <div className="space-y-2">
+          {history.length === 0 ? (
+            <p className="text-xs py-4 text-center" style={{ color: 'rgba(245,240,232,0.2)' }}>
+              No scans yet. Start earning points!
+            </p>
+          ) : (
+            history.slice(0, 5).map((item, i) => (
+              <div
+                key={i}
+                className="flex items-center justify-between py-3 px-4 rounded-lg"
+                style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.03)' }}
+              >
+                <div>
+                  <p className="text-xs font-semibold" style={{ color: '#f5f0e8' }}>{item.source}</p>
+                  <p className="text-[10px]" style={{ color: 'rgba(245,240,232,0.2)' }}>
+                    {new Date(item.date).toLocaleDateString()}
+                  </p>
+                </div>
+                <span className="text-xs font-semibold" style={{ color: '#22c55e' }}>
+                  +{item.amount}
+                </span>
               </div>
-            ))}
-          </div>
+            ))
+          )}
         </div>
       </section>
 

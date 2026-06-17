@@ -1,26 +1,27 @@
 import { useState, useRef, useCallback } from 'react';
 
 interface SpinWheelProps {
-  onResult: (prize: string) => void;
+  canSpin: boolean;
+  onResult: (points: number) => void;
 }
 
 const PRIZES = [
-  { label: 'Free Drink', color: '#d4a04a', probability: 0.15 },
-  { label: '10% Off', color: '#8b5cf6', probability: 0.25 },
-  { label: '50 Pts', color: '#3b82f6', probability: 0.2 },
-  { label: 'Free Snack', color: '#22c55e', probability: 0.1 },
-  { label: '2x Points', color: '#ec4899', probability: 0.15 },
-  { label: 'Try Again', color: '#6b7280', probability: 0.15 },
+  { label: '10 Pts', points: 10, color: '#d4a04a', probability: 0.2 },
+  { label: '25 Pts', points: 25, color: '#8b5cf6', probability: 0.2 },
+  { label: '50 Pts', points: 50, color: '#3b82f6', probability: 0.15 },
+  { label: '100 Pts', points: 100, color: '#22c55e', probability: 0.1 },
+  { label: '200 Pts', points: 200, color: '#ec4899', probability: 0.05 },
+  { label: 'Try Again', points: 0, color: '#6b7280', probability: 0.3 },
 ];
 
-export function SpinWheel({ onResult }: SpinWheelProps) {
+export function SpinWheel({ canSpin, onResult }: SpinWheelProps) {
   const [spinning, setSpinning] = useState(false);
   const [rotation, setRotation] = useState(0);
   const [result, setResult] = useState<string | null>(null);
   const wheelRef = useRef<HTMLDivElement>(null);
 
   const handleSpin = useCallback(() => {
-    if (spinning) return;
+    if (spinning || !canSpin) return;
     setResult(null);
     setSpinning(true);
 
@@ -42,10 +43,13 @@ export function SpinWheel({ onResult }: SpinWheelProps) {
 
     setTimeout(() => {
       setSpinning(false);
-      setResult(PRIZES[selected].label);
-      onResult(PRIZES[selected].label);
+      const prize = PRIZES[selected];
+      setResult(prize.label);
+      if (prize.points > 0) {
+        onResult(prize.points);
+      }
     }, 4000);
-  }, [spinning, rotation, onResult]);
+  }, [spinning, rotation, canSpin, onResult]);
 
   const segmentAngle = 360 / PRIZES.length;
 
@@ -136,8 +140,8 @@ export function SpinWheel({ onResult }: SpinWheelProps) {
       {/* Spin button */}
       <button
         onClick={handleSpin}
-        disabled={spinning}
-        className="px-10 py-3 rounded-full text-sm tracking-wider uppercase font-semibold cursor-pointer"
+        disabled={spinning || !canSpin}
+        className="px-10 py-3 rounded-full text-sm tracking-wider uppercase font-semibold cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
         style={{
           fontFamily: "'Cinzel', serif",
           background: spinning ? 'rgba(212,160,74,0.1)' : 'linear-gradient(135deg, #d4a04a, #b8922f)',
@@ -146,11 +150,11 @@ export function SpinWheel({ onResult }: SpinWheelProps) {
           transition: 'all 0.3s ease',
         }}
       >
-        {spinning ? 'Spinning...' : 'Spin to Win'}
+        {spinning ? 'Spinning...' : canSpin ? 'Spin to Win' : 'Come Back Tomorrow'}
       </button>
 
       <p className="text-[9px] mt-3" style={{ color: 'rgba(245,240,232,0.2)' }}>
-        1 free spin daily • Extra spins: 100 pts each
+        1 free spin daily
       </p>
     </div>
   );
