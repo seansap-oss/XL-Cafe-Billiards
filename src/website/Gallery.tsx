@@ -1,26 +1,22 @@
 import { useState } from 'react';
 import { useInView } from '../hooks';
 
-const FRAMES = [
-  { id: 1, title: 'Neon Nights', category: 'events', color: '#d4a04a' },
-  { id: 2, title: 'The Break', category: 'billiards', color: '#3b82f6' },
-  { id: 3, title: 'Morning Blend', category: 'cafe', color: '#8b5cf6' },
-  { id: 4, title: 'Crowd Surge', category: 'events', color: '#d4a04a' },
-  { id: 5, title: 'Craft Hour', category: 'cafe', color: '#8b5cf6' },
-  { id: 6, title: 'Final Pot', category: 'billiards', color: '#3b82f6' },
-  { id: 7, title: 'Stage Lights', category: 'events', color: '#d4a04a' },
-  { id: 8, title: 'Latte Art', category: 'cafe', color: '#8b5cf6' },
-  { id: 9, title: 'Corner Pocket', category: 'billiards', color: '#3b82f6' },
-  { id: 10, title: 'Open Mic', category: 'events', color: '#d4a04a' },
-  { id: 11, title: 'Espresso Shot', category: 'cafe', color: '#8b5cf6' },
-  { id: 12, title: 'Championship', category: 'billiards', color: '#3b82f6' },
+const IMAGES = [
+  { id: 1, src: '/images/639883476_18194566003342396_8288829428969507754_n.jpg', title: 'Venue Night', category: 'events', color: '#d4a04a' },
+  { id: 2, src: '/images/640423585_18194591794342396_2730125327083066016_n.jpg', title: 'The Crowd', category: 'events', color: '#d4a04a' },
+  { id: 3, src: '/images/642501477_18194592034342396_4449188990216561534_n.jpg', title: 'Live Energy', category: 'events', color: '#d4a04a' },
+  { id: 4, src: '/images/642550276_18194592130342396_6768772885857340180_n.jpg', title: 'Stage Lights', category: 'events', color: '#d4a04a' },
+  { id: 5, src: '/images/649425139_18195710482342396_1653008422813594670_n.jpg', title: 'Night Vibes', category: 'events', color: '#d4a04a' },
+  { id: 6, src: '/images/649465097_18195710464342396_1921842175222718762_n.jpg', title: 'Atmosphere', category: 'events', color: '#d4a04a' },
+  { id: 7, src: '/images/650286062_18195710473342396_7558392728160361024_n.jpg', title: 'The Space', category: 'venue', color: '#3b82f6' },
+  { id: 8, src: '/images/651608947_18195710455342396_8987408853203398827_n.jpg', title: 'Setting', category: 'venue', color: '#3b82f6' },
+  { id: 9, src: '/images/651709933_18196147723342396_4971046561711375604_n.jpg', title: 'Detail', category: 'venue', color: '#3b82f6' },
 ];
 
 const CATEGORIES = [
   { key: 'all', label: 'All' },
   { key: 'events', label: 'Events' },
-  { key: 'billiards', label: 'Billiards' },
-  { key: 'cafe', label: 'Cafe' },
+  { key: 'venue', label: 'Venue' },
 ];
 
 export function Gallery() {
@@ -28,8 +24,8 @@ export function Gallery() {
   const [activeCategory, setActiveCategory] = useState('all');
 
   const filtered = activeCategory === 'all'
-    ? FRAMES
-    : FRAMES.filter((f) => f.category === activeCategory);
+    ? IMAGES
+    : IMAGES.filter((f) => f.category === activeCategory);
 
   return (
     <section id="gallery" className="py-24 lg:py-32">
@@ -82,7 +78,7 @@ export function Gallery() {
   );
 }
 
-function FrameCell({ frame, index }: { frame: (typeof FRAMES)[number]; index: number }) {
+function FrameCell({ frame, index }: { frame: (typeof IMAGES)[number]; index: number }) {
   const [ref, inView] = useInView(0.05);
   const isLarge = index % 5 === 0;
 
@@ -96,21 +92,19 @@ function FrameCell({ frame, index }: { frame: (typeof FRAMES)[number]; index: nu
         transition: `opacity 0.6s ease ${index * 0.05}s`,
       }}
     >
-      {/* Background placeholder — replace with <img> */}
-      <div
-        className="absolute inset-0 transition-transform duration-700 group-hover:scale-110"
-        style={{
-          background: `
-            linear-gradient(135deg, ${frame.color}08 0%, ${frame.color}03 100%)
-          `,
-        }}
+      {/* Real image */}
+      <img
+        src={frame.src}
+        alt={frame.title}
+        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+        loading="lazy"
       />
 
       {/* Hover overlay */}
       <div
         className="absolute inset-0 flex items-end p-6 opacity-0 group-hover:opacity-100 transition-all duration-500"
         style={{
-          background: `linear-gradient(180deg, transparent 40%, ${frame.color}30 100%)`,
+          background: `linear-gradient(180deg, transparent 40%, ${frame.color}40 100%)`,
         }}
       >
         <div>
