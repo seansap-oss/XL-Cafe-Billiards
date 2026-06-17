@@ -10,76 +10,37 @@ const VIDEOS = [
   '/video/XLvideo 2.mp4',
 ];
 
-type TransitionType =
-  | 'bend-up'
-  | 'bend-down'
-  | 'tilt-left'
-  | 'tilt-right'
-  | 'ripple'
-  | 'zoom-in'
-  | 'zoom-out'
-  | 'slide-left'
-  | 'slide-right'
-  | 'flip'
-  | 'spin'
-  | 'glitch';
-
-const TRANSITIONS: { type: TransitionType; css: string }[] = [
-  { type: 'bend-up', css: 'perspective(800px) rotateX(-12deg) scale(1.08)' },
-  { type: 'bend-down', css: 'perspective(800px) rotateX(12deg) scale(1.08)' },
-  { type: 'tilt-left', css: 'perspective(800px) rotateY(-10deg) scale(1.05)' },
-  { type: 'tilt-right', css: 'perspective(800px) rotateY(10deg) scale(1.05)' },
-  { type: 'ripple', css: 'scale(1.1) skewX(2deg)' },
-  { type: 'zoom-in', css: 'scale(1.2)' },
-  { type: 'zoom-out', css: 'scale(0.85)' },
-  { type: 'slide-left', css: 'translateX(-15%) scale(1.08)' },
-  { type: 'slide-right', css: 'translateX(15%) scale(1.08)' },
-  { type: 'flip', css: 'perspective(800px) rotateY(80deg)' },
-  { type: 'spin', css: 'rotate(4deg) scale(1.1)' },
-  { type: 'glitch', css: 'scale(1.03) skewX(-2deg)' },
-];
-
-function getRandomTransition() {
-  return TRANSITIONS[Math.floor(Math.random() * TRANSITIONS.length)];
-}
-
 export function VideoHero() {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [incomingIndex, setIncomingIndex] = useState<number | null>(null);
-  const [transition, setTransition] = useState(TRANSITIONS[0]);
-  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [nextIndex, setNextIndex] = useState<number | null>(null);
+  const [fading, setFading] = useState(false);
 
   const videoRef = useRef<HTMLVideoElement>(null);
-  const incomingRef = useRef<HTMLVideoElement>(null);
+  const nextRef = useRef<HTMLVideoElement>(null);
 
-  const goToNext = useCallback(() => {
-    if (isTransitioning) return;
+  const advance = useCallback(() => {
+    const next = (currentIndex + 1) % VIDEOS.length;
+    setNextIndex(next);
+    setFading(true);
 
-    const nextIndex = (currentIndex + 1) % VIDEOS.length;
-    const newTransition = getRandomTransition();
-
-    setTransition(newTransition);
-    setIncomingIndex(nextIndex);
-    setIsTransitioning(true);
-
+    // After crossfade, swap
     setTimeout(() => {
-      setCurrentIndex(nextIndex);
-      setIncomingIndex(null);
-      setIsTransitioning(false);
-    }, 800);
-  }, [currentIndex, isTransitioning]);
+      setCurrentIndex(next);
+      setNextIndex(null);
+      setFading(false);
+    }, 600);
+  }, [currentIndex]);
 
   // Handle video end
   useEffect(() => {
     const video = videoRef.current;
-    if (!video) return;
-
-    const handler = () => goToNext();
+    if (!video || fading) return;
+    const handler = () => advance();
     video.addEventListener('ended', handler);
     return () => video.removeEventListener('ended', handler);
-  }, [goToNext]);
+  }, [advance, fading]);
 
-  // Load and play current video
+  // Play current video
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
@@ -87,30 +48,25 @@ export function VideoHero() {
     video.play().catch(() => {});
   }, [currentIndex]);
 
-  // Load incoming video
+  // Play incoming video
   useEffect(() => {
-    if (incomingIndex === null) return;
-    const video = incomingRef.current;
+    if (nextIndex === null) return;
+    const video = nextRef.current;
     if (!video) return;
     video.load();
     video.play().catch(() => {});
-  }, [incomingIndex]);
+  }, [nextIndex]);
 
   const handleDotClick = (index: number) => {
-    if (isTransitioning || index === currentIndex) return;
-    const newTransition = getRandomTransition();
-    setTransition(newTransition);
-    setIncomingIndex(index);
-    setIsTransitioning(true);
-
+    if (fading || index === currentIndex) return;
+    setNextIndex(index);
+    setFading(true);
     setTimeout(() => {
       setCurrentIndex(index);
-      setIncomingIndex(null);
-      setIsTransitioning(false);
-    }, 800);
+      setNextIndex(null);
+      setFading(false);
+    }, 600);
   };
-
-  const isRainmaker = currentIndex >= 5;
 
   return (
     <div className="absolute inset-0 overflow-hidden bg-black">
@@ -119,29 +75,29 @@ export function VideoHero() {
         ref={videoRef}
         className="absolute inset-0 w-full h-full object-cover"
         style={{
-          transform: isTransitioning ? transition.css : 'none',
-          transition: isTransitioning ? 'transform 800ms cubic-bezier(0.4, 0, 0.2, 1), opacity 800ms ease' : 'none',
-          opacity: isTransitioning ? 0 : 1,
+          opacity: fading ? 0 : 1,
+          transition: 'opacity 600ms ease',
         }}
         muted
         playsInline
         preload="auto"
-        key={`vid-${currentIndex}`}
+        key={`v-${currentIndex}`}
       >
         <source src={VIDEOS[currentIndex]} type="video/mp4" />
       </video>
 
       {/* Incoming video */}
-      {incomingIndex !== null && (
+      {nextIndex !== null && (
         <video
-          ref={incomingRef}
+          ref={nextRef}
           className="absolute inset-0 w-full h-full object-cover"
+          style={{ opacity: 1 }}
           muted
           playsInline
           preload="auto"
-          key={`inc-${incomingIndex}`}
+          key={`n-${nextIndex}`}
         >
-          <source src={VIDEOS[incomingIndex]} type="video/mp4" />
+          <source src={VIDEOS[nextIndex]} type="video/mp4" />
         </video>
       )}
 
@@ -150,14 +106,14 @@ export function VideoHero() {
         className="absolute inset-0 pointer-events-none"
         style={{
           background: `
-            linear-gradient(180deg, rgba(10,10,12,0.3) 0%, rgba(10,10,12,0.1) 40%, rgba(10,10,12,0.7) 100%),
+            linear-gradient(180deg, rgba(10,10,12,0.35) 0%, rgba(10,10,12,0.1) 40%, rgba(10,10,12,0.75) 100%),
             linear-gradient(0deg, rgba(10,10,12,0.5) 0%, transparent 30%)
           `,
         }}
       />
 
-      {/* XL label on rainmaker */}
-      {isRainmaker && (
+      {/* XL label on rainmaker videos */}
+      {currentIndex >= 5 && (
         <div className="absolute top-6 left-1/2 -translate-x-1/2 z-20">
           <span
             className="text-[9px] tracking-[0.3em] uppercase px-3 py-1"
@@ -169,20 +125,6 @@ export function VideoHero() {
           >
             XL
           </span>
-        </div>
-      )}
-
-      {/* Transition name label */}
-      {isTransitioning && (
-        <div
-          className="absolute top-6 right-6 px-3 py-1 text-[9px] tracking-wider uppercase z-20"
-          style={{
-            background: 'rgba(212,160,74,0.15)',
-            border: '1px solid rgba(212,160,74,0.3)',
-            color: '#d4a04a',
-          }}
-        >
-          {transition.type}
         </div>
       )}
 

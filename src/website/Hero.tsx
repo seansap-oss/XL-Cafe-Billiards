@@ -12,7 +12,7 @@ export function Hero() {
           className="text-xs tracking-[0.5em] uppercase mb-8"
           style={{ color: 'rgba(212,160,74,0.7)' }}
         >
-          Melbourne&apos;s Premier
+          Imphal&apos;s Premier
         </p>
 
         <h1
