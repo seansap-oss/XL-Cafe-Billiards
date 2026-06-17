@@ -1,73 +1,74 @@
-# React + TypeScript + Vite
+# XL Cafe & Billiards
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A premier digital experience for an iconic multi-space venue — premium rock venue, luxury billiard lounge, and avant-garde cafe.
 
-Currently, two official plugins are available:
+## Live Demo
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+🔗 [View on Vercel](https://xl-cafe-billiards.vercel.app)
 
-## React Compiler
+## Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Cinematic Experience
+- **Procedural WebGL Hero** — real-time canvas billiard lounge (particles, light rays, pool balls)
+- **Hero Morph** — 16:9 → 4:3 → 9:16 aspect ratio transition with 3D perspective
+- **Friend Group Scene** — SVG illustration of 4 friends around a phone
+- **WebGL Zoom** — React Three Fiber camera dolly with shader phone screen
+- **B.A.M. Promo** — fullscreen takeover with staggered entrance
+- **Rock of Frame** — masonry gallery with 12 frames, category filters
+- **Events Calendar** — upcoming shows, tournaments, specials
+- **Ambient Audio** — procedural Web Audio API soundscapes per phase
 
-## Expanding the ESLint configuration
+### Mobile App (PWA)
+- **Bottom Nav** — Home, Scan, Rewards, Profile
+- **Barcode Scanner** — animated scan with points earned
+- **Rewards Catalog** — redeem points for drinks, food, merch
+- **Spinning Wheel** — weighted lottery (Free Drink, 10% Off, 50 Pts, etc.)
+- **Profile** — spending stats, membership card, tier progress
+- **PWA Ready** — manifest, service worker, offline support
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Tech Stack
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- React 19 + TypeScript
+- Vite 8
+- Tailwind CSS v4
+- React Three Fiber (WebGL)
+- Web Audio API
+- PWA (Service Worker + Manifest)
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Getting Started
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Build
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run build
 ```
+
+## Deploy to Vercel
+
+1. Push to GitHub
+2. Import repo on [vercel.com](https://vercel.com)
+3. Framework: **Vite** (auto-detected)
+4. Deploy
+
+## Project Structure
+
+```
+src/
+├── app/              # Mobile app (PWA)
+│   ├── pages/        # Home, Scan, Rewards, Profile
+│   └── components/   # SpinWheel
+├── audio/            # Procedural audio engine
+├── components/       # Cinematic experience components
+├── hooks/            # Scroll, audio, responsive, reduced motion
+├── state/            # Scroll-driven state machine
+└── types/            # TypeScript types (experience, rewards)
+```
+
+## License
+
+Private — XL Cafe & Billiards
