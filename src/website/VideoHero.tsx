@@ -10,122 +10,88 @@ const VIDEOS = [
   '/video/XLvideo 2.mp4',
 ];
 
-const FADE_MS = 500;
+const FADE_MS = 600;
+const FALLBACK_MS = 15000;
 
 export function VideoHero() {
   const [index, setIndex] = useState(0);
   const [showNext, setShowNext] = useState(false);
-  const [ready, setReady] = useState(false);
+  const [activeIsA, setActiveIsA] = useState(true);
 
   const aRef = useRef<HTMLVideoElement>(null);
   const bRef = useRef<HTMLVideoElement>(null);
-  const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
-  const activeRef = useRef<'a' | 'b'>('a');
+  const fallbackTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
-  const next = useCallback(() => {
-    setIndex((prev) => (prev + 1) % VIDEOS.length);
-  }, []);
-
-  // When "ready" flips, it means the incoming video can play
-  useEffect(() => {
-    if (!ready) return;
-    const incoming = activeRef.current === 'a' ? aRef.current : bRef.current;
-    if (!incoming) return;
-
-    incoming.currentTime = 0;
-    incoming.play().catch(() => {});
-
-    // Fade in
+  const advance = useCallback(() => {
     setShowNext(true);
-
-    // After fade, hide old and reset
-    clearTimeout(timerRef.current);
-    timerRef.current = setTimeout(() => {
+    setTimeout(() => {
+      setIndex((prev) => (prev + 1) % VIDEOS.length);
       setShowNext(false);
-      setReady(false);
-      activeRef.current = activeRef.current === 'a' ? 'b' : 'a';
-    }, FADE_MS + 50);
-  }, [ready]);
+      setActiveIsA((prev) => !prev);
+    }, FADE_MS);
+  }, [activeIsA]);
 
-  // Handle "a" video ended
-  const handleAEnd = useCallback(() => {
-    if (activeRef.current !== 'a') return;
-    next();
-    setReady(true);
-  }, [next]);
-
-  // Handle "b" video ended
-  const handleBEnd = useCallback(() => {
-    if (activeRef.current !== 'b') return;
-    next();
-    setReady(true);
-  }, [next]);
-
-  // Play the active video when index changes
+  // Play active video + set fallback timer
   useEffect(() => {
-    clearTimeout(timerRef.current);
-    setShowNext(false);
-    setReady(false);
+    const video = activeIsA ? aRef.current : bRef.current;
+    if (!video) return;
 
-    const active = activeRef.current === 'a' ? aRef.current : bRef.current;
-    if (!active) return;
+    clearTimeout(fallbackTimerRef.current);
+    video.currentTime = 0;
+    video.play().catch(() => {});
 
-    // Small delay to ensure DOM update
-    const t = setTimeout(() => {
-      active.currentTime = 0;
-      active.play().catch(() => {});
-    }, 50);
-    return () => clearTimeout(t);
-  }, [index]);
+    fallbackTimerRef.current = setTimeout(() => {
+      if (!showNext) advance();
+    }, FALLBACK_MS);
 
-  // Cleanup
+    return () => clearTimeout(fallbackTimerRef.current);
+  }, [index, activeIsA, showNext, advance]);
+
+  // Preload next video
   useEffect(() => {
-    return () => clearTimeout(timerRef.current);
-  }, []);
+    const nextVideo = activeIsA ? bRef.current : aRef.current;
+    if (nextVideo) nextVideo.load();
+  }, [index, activeIsA]);
 
-  const activeSrc = VIDEOS[index];
-  const nextIdx = (index + 1) % VIDEOS.length;
-  const activeIsA = activeRef.current === 'a';
+  const currentSrc = VIDEOS[index];
+  const nextSrc = VIDEOS[(index + 1) % VIDEOS.length];
 
   return (
     <div className="absolute inset-0 overflow-hidden bg-black">
-      {/* Video A */}
       <video
         ref={aRef}
         className="absolute inset-0 w-full h-full object-cover"
         muted
         playsInline
         preload="auto"
-        onEnded={handleAEnd}
+        onEnded={() => !showNext && advance()}
         style={{
-          opacity: activeIsA ? 1 : showNext ? 0 : 1,
+          opacity: activeIsA ? (showNext ? 0 : 1) : (showNext ? 1 : 0),
           transition: `opacity ${FADE_MS}ms ease`,
-          zIndex: activeIsA ? 2 : 1,
+          zIndex: activeIsA ? (showNext ? 1 : 2) : (showNext ? 2 : 1),
         }}
-        key={`a-${activeIsA ? index : nextIdx}`}
+        key={`a-${activeIsA ? index : (index + 1) % VIDEOS.length}`}
       >
-        <source src={activeIsA ? activeSrc : VIDEOS[nextIdx]} type="video/mp4" />
+        <source src={activeIsA ? currentSrc : nextSrc} type="video/mp4" />
       </video>
 
-      {/* Video B */}
       <video
         ref={bRef}
         className="absolute inset-0 w-full h-full object-cover"
         muted
         playsInline
         preload="auto"
-        onEnded={handleBEnd}
+        onEnded={() => !showNext && advance()}
         style={{
-          opacity: !activeIsA ? 1 : showNext ? 1 : 0,
+          opacity: !activeIsA ? (showNext ? 0 : 1) : (showNext ? 1 : 0),
           transition: `opacity ${FADE_MS}ms ease`,
-          zIndex: !activeIsA ? 2 : 1,
+          zIndex: !activeIsA ? (showNext ? 1 : 2) : (showNext ? 2 : 1),
         }}
-        key={`b-${!activeIsA ? index : nextIdx}`}
+        key={`b-${!activeIsA ? index : (index + 1) % VIDEOS.length}`}
       >
-        <source src={!activeIsA ? activeSrc : VIDEOS[nextIdx]} type="video/mp4" />
+        <source src={!activeIsA ? currentSrc : nextSrc} type="video/mp4" />
       </video>
 
-      {/* Dark overlay */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
@@ -133,13 +99,11 @@ export function VideoHero() {
             linear-gradient(180deg, rgba(10,10,12,0.35) 0%, rgba(10,10,12,0.1) 40%, rgba(10,10,12,0.75) 100%),
             linear-gradient(0deg, rgba(10,10,12,0.5) 0%, transparent 30%)
           `,
-          zIndex: 3,
         }}
       />
 
-      {/* XL label on rainmaker videos */}
       {index >= 5 && (
-        <div className="absolute top-6 left-1/2 -translate-x-1/2" style={{ zIndex: 4 }}>
+        <div className="absolute top-6 left-1/2 -translate-x-1/2 z-20">
           <span
             className="text-[9px] tracking-[0.3em] uppercase px-3 py-1"
             style={{
@@ -153,8 +117,7 @@ export function VideoHero() {
         </div>
       )}
 
-      {/* Video counter */}
-      <div className="absolute top-6 left-6" style={{ zIndex: 4 }}>
+      <div className="absolute top-6 left-6 z-20">
         <span
           className="text-[10px] tracking-wider"
           style={{ color: 'rgba(212,160,74,0.5)', fontFamily: 'monospace' }}
@@ -163,17 +126,15 @@ export function VideoHero() {
         </span>
       </div>
 
-      {/* Progress dots */}
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex gap-2" style={{ zIndex: 4 }}>
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex gap-2 z-20">
         {VIDEOS.map((_, i) => (
           <button
             key={i}
             onClick={() => {
-              clearTimeout(timerRef.current);
+              clearTimeout(fallbackTimerRef.current);
               setShowNext(false);
-              setReady(false);
               setIndex(i);
-              activeRef.current = 'a';
+              setActiveIsA(true);
             }}
             className="cursor-pointer transition-all duration-500"
             style={{
