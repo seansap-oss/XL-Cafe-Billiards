@@ -1,114 +1,96 @@
 export function Hero() {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background */}
-      <div className="absolute inset-0" style={{ background: '#0a0a0c' }} />
+      {/* Background image placeholder — replace with real photo */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background: `
+            linear-gradient(180deg, rgba(10,10,12,0.3) 0%, rgba(10,10,12,0.5) 50%, rgba(10,10,12,0.9) 100%),
+            linear-gradient(135deg, #1a1520 0%, #0d0d12 50%, #0a0a0c 100%)
+          `,
+        }}
+      />
 
-      {/* Ambient glow */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div
-          className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2"
-          style={{
-            width: 600,
-            height: 600,
-            background: 'radial-gradient(circle, rgba(212,160,74,0.06) 0%, transparent 70%)',
-          }}
-        />
-        <div
-          className="absolute bottom-0 left-0 right-0 h-64"
-          style={{ background: 'linear-gradient(180deg, transparent, #0a0a0c)' }}
-        />
-      </div>
-
-      {/* Grid lines */}
-      <div className="absolute inset-0 pointer-events-none opacity-[0.02]">
-        <div className="absolute inset-0" style={{
-          backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)',
-          backgroundSize: '80px 80px',
-        }} />
-      </div>
+      {/* Subtle grain overlay */}
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{
+        backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noise)\' opacity=\'1\'/%3E%3C/svg%3E")',
+      }} />
 
       {/* Content */}
       <div className="relative z-10 text-center px-6 max-w-5xl mx-auto">
-        <div className="mb-6">
-          <span
-            className="text-xs tracking-[0.5em] uppercase block mb-6"
-            style={{ color: 'rgba(212,160,74,0.5)' }}
-          >
-            Est. 2024
-          </span>
-        </div>
+        <p
+          className="text-xs tracking-[0.5em] uppercase mb-8"
+          style={{ color: 'rgba(212,160,74,0.6)' }}
+        >
+          Melbourne&apos;s Premier
+        </p>
 
         <h1
-          className="text-7xl sm:text-8xl lg:text-[10rem] font-bold mb-6 leading-none"
+          className="text-6xl sm:text-8xl lg:text-9xl font-bold mb-6 leading-[0.9]"
           style={{
             fontFamily: "'Cinzel', serif",
-            background: 'linear-gradient(135deg, #d4a04a 0%, #f0c050 30%, #d4a04a 60%, #b8922f 100%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text',
-            letterSpacing: '0.05em',
-            filter: 'drop-shadow(0 0 60px rgba(212,160,74,0.15))',
+            color: '#f5f0e8',
+            letterSpacing: '0.02em',
           }}
         >
           XL
         </h1>
 
         <div className="flex items-center justify-center gap-4 mb-8">
-          <div className="h-[1px] w-16 lg:w-24" style={{ background: 'linear-gradient(90deg, transparent, rgba(212,160,74,0.4))' }} />
-          <span
-            className="text-sm lg:text-base tracking-[0.3em] uppercase"
-            style={{ color: 'rgba(245,240,232,0.5)', fontFamily: "'Cinzel', serif" }}
+          <div className="h-[1px] w-12" style={{ background: 'linear-gradient(90deg, transparent, rgba(212,160,74,0.5))' }} />
+          <p
+            className="text-sm tracking-[0.4em] uppercase"
+            style={{ color: 'rgba(212,160,74,0.7)', fontFamily: "'Cinzel', serif" }}
           >
             Cafe & Billiards
-          </span>
-          <div className="h-[1px] w-16 lg:w-24" style={{ background: 'linear-gradient(90deg, rgba(212,160,74,0.4), transparent)' }} />
+          </p>
+          <div className="h-[1px] w-12" style={{ background: 'linear-gradient(90deg, rgba(212,160,74,0.5), transparent)' }} />
         </div>
 
         <p
-          className="text-base lg:text-lg max-w-2xl mx-auto mb-12 leading-relaxed"
-          style={{ color: 'rgba(245,240,232,0.35)', fontWeight: 300 }}
+          className="text-base sm:text-lg max-w-xl mx-auto mb-12 leading-relaxed"
+          style={{ color: 'rgba(245,240,232,0.4)', fontWeight: 300 }}
         >
-          Where music, billiards, and culture converge. Three distinct spaces. One unforgettable experience.
+          Where music, billiards, and culture converge.
+          <br />Three spaces. One unforgettable experience.
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <a
-            href="#venues"
-            className="px-8 py-3.5 rounded-full text-xs tracking-[0.2em] uppercase font-semibold no-underline transition-all duration-300"
-            style={{
-              background: 'linear-gradient(135deg, #d4a04a, #b8922f)',
-              color: '#0a0a0c',
-              fontFamily: "'Cinzel', serif",
-            }}
-            onMouseEnter={(e) => { e.currentTarget.style.boxShadow = '0 0 40px rgba(212,160,74,0.3)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.boxShadow = 'none'; }}
-          >
-            Explore Spaces
-          </a>
-          <a
-            href="#events"
-            className="px-8 py-3.5 rounded-full text-xs tracking-[0.2em] uppercase font-semibold no-underline transition-all duration-300"
+            href="#venue"
+            className="px-10 py-4 rounded-none text-xs tracking-[0.25em] uppercase font-semibold no-underline transition-all duration-500"
             style={{
               background: 'transparent',
-              border: '1px solid rgba(212,160,74,0.3)',
+              border: '1px solid rgba(212,160,74,0.4)',
               color: '#d4a04a',
               fontFamily: "'Cinzel', serif",
             }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(212,160,74,0.08)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = '#d4a04a'; e.currentTarget.style.color = '#0a0a0c'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#d4a04a'; }}
           >
-            Upcoming Events
+            Explore The Venue
+          </a>
+          <a
+            href="#enquire"
+            className="px-10 py-4 rounded-none text-xs tracking-[0.25em] uppercase font-semibold no-underline transition-all duration-500"
+            style={{
+              background: 'transparent',
+              border: '1px solid rgba(255,255,255,0.1)',
+              color: 'rgba(245,240,232,0.5)',
+              fontFamily: "'Cinzel', serif",
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'rgba(245,240,232,0.3)'; e.currentTarget.style.color = '#f5f0e8'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; e.currentTarget.style.color = 'rgba(245,240,232,0.5)'; }}
+          >
+            Enquire Now
           </a>
         </div>
       </div>
 
       {/* Scroll indicator */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
-        <span className="text-[9px] tracking-[0.3em] uppercase" style={{ color: 'rgba(245,240,232,0.15)' }}>
-          Scroll
-        </span>
-        <div className="w-[1px] h-8" style={{ background: 'linear-gradient(180deg, rgba(212,160,74,0.3), transparent)' }} />
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2">
+        <div className="w-[1px] h-12 mx-auto" style={{ background: 'linear-gradient(180deg, rgba(212,160,74,0.4), transparent)' }} />
       </div>
     </section>
   );

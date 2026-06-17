@@ -15,20 +15,19 @@ export function Header({ onOpenApp }: HeaderProps) {
   }, []);
 
   const navLinks = [
-    { label: 'Venues', href: '#venues' },
+    { label: 'Venue', href: '#venue' },
     { label: 'Events', href: '#events' },
     { label: 'Gallery', href: '#gallery' },
     { label: 'Rewards', href: '#rewards' },
-    { label: 'Contact', href: '#contact' },
+    { label: 'Contact', href: '#enquire' },
   ];
 
   return (
     <header
-      className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
+      className="fixed top-0 left-0 right-0 z-50 transition-all duration-500"
       style={{
-        background: scrolled ? 'rgba(10,10,12,0.95)' : 'transparent',
+        background: scrolled ? 'rgba(10,10,12,0.97)' : 'transparent',
         backdropFilter: scrolled ? 'blur(20px)' : 'none',
-        borderBottom: scrolled ? '1px solid rgba(255,255,255,0.04)' : '1px solid transparent',
       }}
     >
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
@@ -41,9 +40,6 @@ export function Header({ onOpenApp }: HeaderProps) {
             >
               XL
             </span>
-            <span className="text-[10px] tracking-wider uppercase hidden sm:block" style={{ color: 'rgba(245,240,232,0.3)' }}>
-              Cafe & Billiards
-            </span>
           </a>
 
           {/* Desktop nav */}
@@ -52,7 +48,7 @@ export function Header({ onOpenApp }: HeaderProps) {
               <a
                 key={link.label}
                 href={link.href}
-                className="text-xs tracking-wider uppercase no-underline transition-colors duration-300"
+                className="text-[11px] tracking-[0.15em] uppercase no-underline transition-colors duration-300"
                 style={{ color: 'rgba(245,240,232,0.4)' }}
                 onMouseEnter={(e) => { e.currentTarget.style.color = '#d4a04a'; }}
                 onMouseLeave={(e) => { e.currentTarget.style.color = 'rgba(245,240,232,0.4)'; }}
@@ -62,18 +58,29 @@ export function Header({ onOpenApp }: HeaderProps) {
             ))}
           </nav>
 
-          {/* CTA */}
-          <div className="flex items-center gap-3">
+          {/* Right side */}
+          <div className="flex items-center gap-6">
+            <a
+              href="tel:+1234567890"
+              className="hidden lg:block text-[10px] tracking-wider no-underline transition-colors duration-300"
+              style={{ color: 'rgba(245,240,232,0.3)' }}
+              onMouseEnter={(e) => { e.currentTarget.style.color = '#d4a04a'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.color = 'rgba(245,240,232,0.3)'; }}
+            >
+              +1 (234) 567-890
+            </a>
+
             <button
               onClick={onOpenApp}
-              className="px-4 py-2 rounded-full text-[10px] tracking-wider uppercase cursor-pointer hidden sm:block"
+              className="hidden lg:block px-5 py-2 text-[10px] tracking-[0.2em] uppercase cursor-pointer transition-all duration-500"
               style={{
-                background: 'linear-gradient(135deg, #d4a04a, #b8922f)',
-                color: '#0a0a0c',
-                border: 'none',
+                background: 'transparent',
+                border: '1px solid rgba(212,160,74,0.3)',
+                color: '#d4a04a',
                 fontFamily: "'Cinzel', serif",
-                fontWeight: 600,
               }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = '#d4a04a'; e.currentTarget.style.color = '#0a0a0c'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#d4a04a'; }}
             >
               Open App
             </button>
@@ -81,12 +88,12 @@ export function Header({ onOpenApp }: HeaderProps) {
             {/* Mobile menu button */}
             <button
               onClick={() => setMenuOpen(!menuOpen)}
-              className="lg:hidden w-8 h-8 flex flex-col items-center justify-center gap-1.5 cursor-pointer"
-              style={{ background: 'none', border: 'none' }}
+              className="lg:hidden flex flex-col items-center justify-center gap-1.5 cursor-pointer"
+              style={{ background: 'none', border: 'none', width: 32, height: 32 }}
             >
-              <span className="block w-5 h-[1px]" style={{ background: menuOpen ? '#d4a04a' : 'rgba(245,240,232,0.5)', transform: menuOpen ? 'rotate(45deg) translateY(3.5px)' : 'none', transition: 'all 0.3s ease' }} />
-              <span className="block w-5 h-[1px]" style={{ background: menuOpen ? 'transparent' : 'rgba(245,240,232,0.5)', transition: 'all 0.3s ease' }} />
-              <span className="block w-5 h-[1px]" style={{ background: menuOpen ? '#d4a04a' : 'rgba(245,240,232,0.5)', transform: menuOpen ? 'rotate(-45deg) translateY(-3.5px)' : 'none', transition: 'all 0.3s ease' }} />
+              <span className="block w-5 h-[1px] transition-all duration-300" style={{ background: menuOpen ? '#d4a04a' : 'rgba(245,240,232,0.5)', transform: menuOpen ? 'rotate(45deg) translateY(3.5px)' : 'none' }} />
+              <span className="block w-5 h-[1px] transition-all duration-300" style={{ background: menuOpen ? 'transparent' : 'rgba(245,240,232,0.5)' }} />
+              <span className="block w-5 h-[1px] transition-all duration-300" style={{ background: menuOpen ? '#d4a04a' : 'rgba(245,240,232,0.5)', transform: menuOpen ? 'rotate(-45deg) translateY(-3.5px)' : 'none' }} />
             </button>
           </div>
         </div>
@@ -95,8 +102,8 @@ export function Header({ onOpenApp }: HeaderProps) {
       {/* Mobile menu */}
       {menuOpen && (
         <div
-          className="lg:hidden px-6 pb-6"
-          style={{ background: 'rgba(10,10,12,0.98)', borderBottom: '1px solid rgba(255,255,255,0.04)' }}
+          className="lg:hidden px-6 pb-8"
+          style={{ background: 'rgba(10,10,12,0.98)' }}
         >
           <nav className="flex flex-col gap-4">
             {navLinks.map((link) => (
@@ -104,21 +111,27 @@ export function Header({ onOpenApp }: HeaderProps) {
                 key={link.label}
                 href={link.href}
                 onClick={() => setMenuOpen(false)}
-                className="text-sm tracking-wider uppercase no-underline py-2"
+                className="text-xs tracking-wider uppercase no-underline py-2"
                 style={{ color: 'rgba(245,240,232,0.4)' }}
               >
                 {link.label}
               </a>
             ))}
+            <a
+              href="tel:+1234567890"
+              className="text-xs tracking-wider no-underline py-2"
+              style={{ color: 'rgba(245,240,232,0.3)' }}
+            >
+              +1 (234) 567-890
+            </a>
             <button
               onClick={() => { setMenuOpen(false); onOpenApp(); }}
-              className="mt-2 px-4 py-3 rounded-full text-xs tracking-wider uppercase cursor-pointer w-full"
+              className="mt-2 px-5 py-3 text-[10px] tracking-[0.2em] uppercase cursor-pointer"
               style={{
-                background: 'linear-gradient(135deg, #d4a04a, #b8922f)',
-                color: '#0a0a0c',
-                border: 'none',
+                background: 'transparent',
+                border: '1px solid rgba(212,160,74,0.3)',
+                color: '#d4a04a',
                 fontFamily: "'Cinzel', serif",
-                fontWeight: 600,
               }}
             >
               Open App
