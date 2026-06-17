@@ -22,6 +22,7 @@ import {
   CustomCursor,
   HeroCanvas,
 } from './components';
+import { AppRouter } from './app/AppRouter';
 
 const ZoomScene = lazy(() =>
   import('./components/ZoomScene').then((m) => ({ default: m.ZoomScene }))
@@ -35,9 +36,12 @@ function ZoomFallback() {
   );
 }
 
+type AppMode = 'experience' | 'app';
+
 function App() {
   const [loaded, setLoaded] = useState(false);
   const [muted, setMuted] = useState(true);
+  const [mode, setMode] = useState<AppMode>('app');
   const rawScroll = useScrollProgress();
   const reducedMotion = useReducedMotion();
   const smoothScroll = useSmoothValue(rawScroll, reducedMotion ? 0.5 : 0.06);
@@ -67,10 +71,50 @@ function App() {
     setMuted(false);
   }, [ensureStarted, engineSetMuted]);
 
+  const toggleMode = useCallback(() => {
+    setMode((m) => m === 'experience' ? 'app' : 'experience');
+  }, []);
+
+  // App mode — mobile app experience
+  if (mode === 'app') {
+    return (
+      <>
+        {!loaded && <Preloader onComplete={handleLoaded} />}
+        <AppRouter />
+        {/* Mode toggle — hidden in production, visible in dev */}
+        <button
+          onClick={toggleMode}
+          className="fixed top-4 left-4 z-[70] px-3 py-1.5 rounded-full text-[9px] tracking-wider uppercase cursor-pointer"
+          style={{
+            background: 'rgba(255,255,255,0.05)',
+            border: '1px solid rgba(255,255,255,0.08)',
+            color: 'rgba(245,240,232,0.3)',
+            backdropFilter: 'blur(8px)',
+          }}
+        >
+          Experience ↗
+        </button>
+      </>
+    );
+  }
+
+  // Experience mode — full cinematic scroll
   return (
     <>
       {!loaded && <Preloader onComplete={handleLoaded} />}
       <CustomCursor />
+      <button
+        onClick={toggleMode}
+        className="fixed top-4 left-4 z-[70] px-3 py-1.5 rounded-full text-[9px] tracking-wider uppercase cursor-pointer"
+        style={{
+          background: 'rgba(255,255,255,0.05)',
+          border: '1px solid rgba(255,255,255,0.08)',
+          color: 'rgba(245,240,232,0.3)',
+          backdropFilter: 'blur(8px)',
+        }}
+      >
+        App ↗
+      </button>
 
       <div className="relative" style={{ height: '800vh', background: '#0a0a0c' }}>
         <div className="fixed inset-0 overflow-hidden" style={{ background: '#0a0a0c' }}>

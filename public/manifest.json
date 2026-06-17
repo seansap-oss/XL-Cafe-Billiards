@@ -1,0 +1,27 @@
+{
+  "name": "XL Cafe & Billiards",
+  "short_name": "XL",
+  "description": "Scan. Earn. Claim. The XL rewards experience.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0a0a0c",
+  "theme_color": "#0a0a0c",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["entertainment", "food", "lifestyle"],
+  "lang": "en",
+  "dir": "ltr"
+}
