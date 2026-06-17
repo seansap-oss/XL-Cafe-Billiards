@@ -6,8 +6,8 @@ const VIDEOS = [
   '/video/3 Audio_engineer_adjusting_faders_202606180056.mp4',
   '/video/4 Friends_looking_at_smartphone_sc._202606180057.mp4',
   '/video/5 Finger_taps_play_button_202606180145.mp4',
-  '/video/rainmaker video 1.mp4',
-  '/video/rainmakervideo 2.mp4',
+  '/video/XL video 1.mp4',
+  '/video/XLvideo 2.mp4',
 ];
 
 type TransitionType =
